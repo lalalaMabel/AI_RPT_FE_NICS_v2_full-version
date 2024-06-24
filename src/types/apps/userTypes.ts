@@ -16,3 +16,10 @@ export type UsersType = {
   avatarColor?: ThemeColor
   billing: string
 }
+
+export type RoleType = {
+  roleId: number
+  roleName: string
+  roleContent: string
+  roleContentEng: string
+}
