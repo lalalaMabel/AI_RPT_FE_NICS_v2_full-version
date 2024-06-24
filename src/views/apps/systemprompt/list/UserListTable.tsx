@@ -176,7 +176,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
   const handleConfirmDelete = async () => {
     if (selectedRow) {
       try {
-        const response = await fetch(`http://192.168.1.196:7001/api/role/${selectedRow.roleId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role/${selectedRow.roleId}`, {
           method: 'DELETE',
         });
         if (!response.ok) {
