@@ -55,7 +55,7 @@ import Tooltip from '@mui/material/Tooltip'
 import AddEditSystemPrompt from '@components/dialogs/add-edit-systemprompt'
 import OpenDialogOnElementClick from '@/components/dialogs/OpenDialogOnElementClick'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
-import { Alert, AlertTitle, AlertColor, Fade, Dialog, DialogContent  } from '@mui/material'; // 引入Alert和AlertTitle
+import { Alert, AlertTitle, AlertColor, Fade  } from '@mui/material'; // 引入Alert和AlertTitle
 import { useSysRoleData } from '@/contexts/userDataContext'
 
 declare module '@tanstack/table-core' {
@@ -131,6 +131,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
   const [alertMessage, setAlertMessage] = useState<string | null>(null); // 用於存儲警告信息
   const [alertSeverity, setAlertSeverity] = useState<AlertColor>('info'); // 用於設置警告類型
   const [openFade, setOpenFade] = useState<boolean>(true) // 用於控制 Fade 動畫
+  const [trigger, setTrigger] = useState(false); // 用於強制重新渲染
 //'error' | 'warning' | 'info' | 'success'
   // Hooks
   const { lang: locale } = useParams()
@@ -194,11 +195,13 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
         await fetchSysRoleData();
         setAlertMessage('Data deleted successfully.');
         setAlertSeverity('success');
+        setTrigger(!trigger); // 強制重新渲染
         // setData(data?.filter(item => item.roleId !== selectedRow.roleId));
       } catch (error) {
         console.error('Error deleting data:', error);
         setAlertMessage(`Error deleting data: ${error}`);
         setAlertSeverity('error');
+        setTrigger(!trigger); // 強制重新渲染
       } finally {
         setOpenConfirmDialog(false);
         setSelectedRow(null);
@@ -346,29 +349,45 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
   }
 
   useEffect(() => {
-    if (alertMessage) {
+    if (alertMessage && alertSeverity === 'success') {
       setOpenFade(true);
       const timer = setTimeout(() => {
         setOpenFade(false);
-      }, 3000); // 3秒自動消失
+      }, 2000); // 2秒自動消失
 
       return () => clearTimeout(timer); // 清除定時器
+    } else if (alertMessage) {
+      setOpenFade(true);
     }
-  }, [alertMessage]);
+  }, [alertMessage, alertSeverity, trigger]);
 
+  const handleAlertClose = () => {
+    setOpenFade(false);
+    setTimeout(() => {
+      setAlertMessage(null);
+    }, 300); // 延遲清除消息，確保淡出動畫完成
+  };
+
+  const alertContainerStyle = {
+    position: 'fixed' as 'fixed',
+    // top: '13%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+  };
   return (
     <>
+      <Card>
     {alertMessage && (
     <Fade in={openFade} timeout={{ exit: 300 }}>
+            <div style={alertContainerStyle}>
         <Alert severity={alertSeverity} className='mbe-8'
         action={
           <IconButton
             aria-label='close'
             color='inherit'
             size='small'
-            onClick={() => {
-              setOpenFade(false)
-            }}
+            onClick={handleAlertClose}
           >
             <i className='tabler-x' />
           </IconButton>
@@ -376,9 +395,9 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
           <AlertTitle>{alertSeverity === 'success' ? 'Success' : 'Error'}</AlertTitle>
           {alertMessage}
         </Alert>
+            </div>
       </Fade>
     )}
-      <Card>
         <CardHeader title='System Prompt' className='pbe-4' />
         {/* <TableFilters setData={setData} tableData={tableData} /> */}
         <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
