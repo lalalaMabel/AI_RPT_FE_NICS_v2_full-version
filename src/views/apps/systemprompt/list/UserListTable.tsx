@@ -55,6 +55,7 @@ import Tooltip from '@mui/material/Tooltip'
 import AddNewSystemPrompt from '@components/dialogs/add-edit-systemprompt'
 import OpenDialogOnElementClick from '@/components/dialogs/OpenDialogOnElementClick'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
+import { Alert, AlertTitle, AlertColor, Fade, Dialog, DialogContent  } from '@mui/material'; // 引入Alert和AlertTitle
 import { useUserData } from '@/contexts/userDataContext'
 
 declare module '@tanstack/table-core' {
@@ -127,6 +128,10 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
   const [selectedRow, setSelectedRow] = useState<RoleType | null>(null); // 保存选中的行数据
   const [globalFilter, setGlobalFilter] = useState('')
   const { fetchUserData } = useUserData();
+  const [alertMessage, setAlertMessage] = useState<string | null>(null); // 用於存儲警告信息
+  const [alertSeverity, setAlertSeverity] = useState<AlertColor>('info'); // 用於設置警告類型
+  const [openFade, setOpenFade] = useState<boolean>(true) // 用於控制 Fade 動畫
+//'error' | 'warning' | 'info' | 'success'
   // Hooks
   const { lang: locale } = useParams()
 
@@ -176,20 +181,26 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
   const handleConfirmDelete = async () => {
     if (selectedRow) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role/${selectedRow.roleId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role/1000000`, {
           method: 'DELETE',
         });
         if (!response.ok) {
-          throw new Error('Failed to delete data');
+          throw new Error(response.ok + response.statusText);
         }
+
         // 删除成功后刷新数据
         await fetchUserData();
+        setAlertMessage('Data deleted successfully.');
+        setAlertSeverity('success');
         // setData(data?.filter(item => item.roleId !== selectedRow.roleId));
       } catch (error) {
         console.error('Error deleting data:', error);
+        setAlertMessage(`Error deleting data: ${error}`);
+        setAlertSeverity('error');
       } finally {
         setOpenConfirmDialog(false);
         setSelectedRow(null);
+        setOpenFade(true); // 顯示 Alert
       }
     }
   };
@@ -332,8 +343,39 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
     size: 'small',
   }
 
+  useEffect(() => {
+    if (alertMessage) {
+      setOpenFade(true);
+      const timer = setTimeout(() => {
+        setOpenFade(false);
+      }, 3000); // 3秒自動消失
+
+      return () => clearTimeout(timer); // 清除定時器
+    }
+  }, [alertMessage]);
+
   return (
     <>
+    {alertMessage && (
+    <Fade in={openFade} timeout={{ exit: 300 }}>
+        <Alert severity={alertSeverity} className='mbe-8'
+        action={
+          <IconButton
+            aria-label='close'
+            color='inherit'
+            size='small'
+            onClick={() => {
+              setOpenFade(false)
+            }}
+          >
+            <i className='tabler-x' />
+          </IconButton>
+        }>
+          <AlertTitle>{alertSeverity === 'success' ? 'Success' : 'Error'}</AlertTitle>
+          {alertMessage}
+        </Alert>
+      </Fade>
+    )}
       <Card>
         <CardHeader title='System Prompt' className='pbe-4' />
         {/* <TableFilters setData={setData} tableData={tableData} /> */}

@@ -37,7 +37,10 @@ const ConfirmationDialog = ({ open, setOpen, type, onConfirm }: ConfirmationDial
 
   const handleConfirmation = (value: boolean) => {
     setUserInput(value)
-    setSecondDialog(true)
+    if (type !== 'delete') {
+      setSecondDialog(true);
+    }
+    // setSecondDialog(true)
     setOpen(false)
     if (value && onConfirm) {
       onConfirm(); // 调用 onConfirm 回调
