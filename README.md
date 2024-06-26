@@ -1,7 +1,17 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
 參考網址(https://demos.pixinvent.com/vuexy-nextjs-admin-template/documentation/docs/guide/overview/getting-started/)
 
 ## Getting Started
+
+First First, check intall node.js already
+
+install package
+
+```bash
+pnpm install
+npx prisma generate
+```
 
 First, run the development server:
 
