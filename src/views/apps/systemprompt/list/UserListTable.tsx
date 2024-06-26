@@ -52,11 +52,11 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import Tooltip from '@mui/material/Tooltip'
-import AddNewSystemPrompt from '@components/dialogs/add-edit-systemprompt'
+import AddEditSystemPrompt from '@components/dialogs/add-edit-systemprompt'
 import OpenDialogOnElementClick from '@/components/dialogs/OpenDialogOnElementClick'
 import ConfirmationDialog from '@/components/dialogs/confirmation-dialog'
 import { Alert, AlertTitle, AlertColor, Fade, Dialog, DialogContent  } from '@mui/material'; // 引入Alert和AlertTitle
-import { useUserData } from '@/contexts/userDataContext'
+import { useSysRoleData } from '@/contexts/userDataContext'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -127,7 +127,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // 控制确认对话框的状态
   const [selectedRow, setSelectedRow] = useState<RoleType | null>(null); // 保存选中的行数据
   const [globalFilter, setGlobalFilter] = useState('')
-  const { fetchUserData } = useUserData();
+  const { fetchSysRoleData } = useSysRoleData();
   const [alertMessage, setAlertMessage] = useState<string | null>(null); // 用於存儲警告信息
   const [alertSeverity, setAlertSeverity] = useState<AlertColor>('info'); // 用於設置警告類型
   const [openFade, setOpenFade] = useState<boolean>(true) // 用於控制 Fade 動畫
@@ -191,7 +191,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
         }
 
         // 删除成功后刷新数据
-        await fetchUserData();
+        await fetchSysRoleData();
         setAlertMessage('Data deleted successfully.');
         setAlertSeverity('success');
         // setData(data?.filter(item => item.roleId !== selectedRow.roleId));
@@ -286,7 +286,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
             <OpenDialogOnElementClick
               element={IconButton}
               elementProps={buttonEditProps}
-              dialog={AddNewSystemPrompt}
+              dialog={AddEditSystemPrompt}
               dialogProps={{ data: row.original }}
             >
             </OpenDialogOnElementClick>
@@ -410,7 +410,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
             <OpenDialogOnElementClick
                 element={Button}
                 elementProps={buttonProps}
-                dialog={AddNewSystemPrompt}
+                dialog={AddEditSystemPrompt}
                 dialogProps={{ }}
               />
           </div>

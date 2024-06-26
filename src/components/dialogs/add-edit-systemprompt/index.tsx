@@ -17,7 +17,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 // Component Imports
 import DialogCloseButton from '../DialogCloseButton'
 import CustomTextField from '@core/components/mui/TextField'
-import { useUserData } from '@/contexts/userDataContext';
+import { useSysRoleData } from '@/contexts/userDataContext';
 
 type AddEditSystemPromptData = {
   roleId?: number
@@ -43,7 +43,7 @@ const initialSystemPromptData: AddEditSystemPromptProps['data'] = {
 const AddEditSystemPrompt = ({ open, setOpen, data }: AddEditSystemPromptProps) => {
   // States
   const [systempromptData, setSystemPromptData] = useState<AddEditSystemPromptProps['data']>(initialSystemPromptData)
-  const { fetchUserData } = useUserData();
+  const { fetchSysRoleData } = useSysRoleData();
 
   useEffect(() => {
     setSystemPromptData(data ?? initialSystemPromptData)
@@ -78,7 +78,7 @@ const AddEditSystemPrompt = ({ open, setOpen, data }: AddEditSystemPromptProps) 
 
       // 成功後關閉dialog
       setOpen(false)
-      fetchUserData(); // 调用刷新数据的函数
+      fetchSysRoleData(); // 调用刷新数据的函数
     } catch (error) {
       console.error('Error updating data:', error)
     }
