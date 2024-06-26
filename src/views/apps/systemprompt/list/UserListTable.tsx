@@ -290,7 +290,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
               element={IconButton}
               elementProps={buttonEditProps}
               dialog={AddEditSystemPrompt}
-              dialogProps={{ data: row.original }}
+              dialogProps={{ data: row.original, setAlertMessage, setAlertSeverity }}
             >
             </OpenDialogOnElementClick>
 
@@ -430,7 +430,7 @@ const UserListTable = ({ tableData }: { tableData?: RoleType[] }) => {
                 element={Button}
                 elementProps={buttonProps}
                 dialog={AddEditSystemPrompt}
-                dialogProps={{ }}
+                dialogProps={{ setAlertMessage, setAlertSeverity}}
               />
           </div>
         </div>

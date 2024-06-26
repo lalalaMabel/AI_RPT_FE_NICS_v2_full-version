@@ -18,6 +18,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import DialogCloseButton from '../DialogCloseButton'
 import CustomTextField from '@core/components/mui/TextField'
 import { useSysRoleData } from '@/contexts/userDataContext';
+import { AlertColor } from '@mui/material'
 
 type AddEditSystemPromptData = {
   roleId?: number
@@ -31,6 +32,8 @@ type AddEditSystemPromptProps = {
   open: boolean
   setOpen: (open: boolean) => void
   data?: AddEditSystemPromptData
+  setAlertMessage: (message: string | null) => void
+  setAlertSeverity: (severity: AlertColor) => void
 }
 
 const initialSystemPromptData: AddEditSystemPromptProps['data'] = {
@@ -40,7 +43,7 @@ const initialSystemPromptData: AddEditSystemPromptProps['data'] = {
   roleContentEng: ''
 }
 
-const AddEditSystemPrompt = ({ open, setOpen, data }: AddEditSystemPromptProps) => {
+const AddEditSystemPrompt = ({ open, setOpen, data, setAlertMessage, setAlertSeverity }: AddEditSystemPromptProps) => {
   // States
   const [systempromptData, setSystemPromptData] = useState<AddEditSystemPromptProps['data']>(initialSystemPromptData)
   const { fetchSysRoleData } = useSysRoleData();
@@ -79,8 +82,13 @@ const AddEditSystemPrompt = ({ open, setOpen, data }: AddEditSystemPromptProps) 
       // 成功後關閉dialog
       setOpen(false)
       fetchSysRoleData(); // 调用刷新数据的函数
+      setAlertMessage('Data updated successfully.');
+      setAlertSeverity('success');
     } catch (error) {
+      setOpen(false)
       console.error('Error updating data:', error)
+      setAlertMessage(`Error updating data: ${error}`);
+      setAlertSeverity('error');
     }
   }
 
