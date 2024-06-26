@@ -15,8 +15,8 @@ export const UserDataProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserData = async () => {
     try {
-      const response  = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role`, { method: 'GET' });
-      // const response = await fetch(`${process.env.API_URL2}/role`, { method: 'GET' });
+      // const response  = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role`, { method: 'GET' });
+      const response  = await fetch(`http://192.168.1.196:7001/api/role`, { method: 'GET' });
       if (!response.ok) {
         throw new Error('Failed to fetch userData');
       }

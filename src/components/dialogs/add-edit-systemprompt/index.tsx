@@ -63,7 +63,8 @@ const AddEditSystemPrompt = ({ open, setOpen, data }: AddEditSystemPromptProps) 
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role`, {
+      // const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/role`, {
+      const response = await fetch(`http://192.168.1.196:7001/api/role`, {
         method: data ? 'PUT' : 'POST', // 根據data是否存在決定使用PUT或POST
         headers: {
           'Content-Type': 'application/json',
